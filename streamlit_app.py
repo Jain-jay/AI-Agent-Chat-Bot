@@ -20,6 +20,12 @@ with st.sidebar:
     else:
         selected_model = st.selectbox("Select OpenAI Model:", MODEL_NAMES_OPENAI)
         
+    user_api_key = st.text_input(
+        f"{provider} API Key (Optional):", 
+        type="password", 
+        help="Leave empty if API key is already saved in Streamlit Secrets"
+    )
+
     allow_web_search = st.checkbox("Allow Web Search (Tavily)", value=False)
     
     system_prompt = st.text_area(
@@ -59,8 +65,9 @@ if prompt := st.chat_input("Ask anything..."):
                     allow_search=allow_web_search,
                     system_prompt=system_prompt,
                     provider=provider,
+                    custom_api_key=user_api_key,
                 )
                 st.markdown(response_text)
                 st.session_state.messages.append({"role": "assistant", "content": response_text})
             except Exception as e:
-                st.error(f"Error generating response: {str(e)}")
+                st.error(f"Error: {str(e)}")
